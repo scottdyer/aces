@@ -32,11 +32,14 @@ jobs:
           echo "Received dispatch from ${{ github.event.client_payload.submodule }}"
           echo "Payload: ${{ toJson(github.event.client_payload) }}"
     
-      - name: Update Metadata
+      - name: Update transforms.json
         id: updater
         run: |
-          # Pass the entire client-payload from the dispatch to the python script
-          python scripts/update_inventory.py '${{ toJson(github.event.client_payload) }}'
+          # 1. Save the payload to a temporary file to avoid shell quoting errors
+          echo '${{ toJson(github.event.client_payload) }}' > payload.json
+          
+          # 2. Run the script pointing to that file
+          python scripts/update_inventory.py payload.json
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
