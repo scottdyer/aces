@@ -14,6 +14,11 @@ jobs:
           submodules: true
           token: ${{ secrets.PARENT_REPO_PAT }}
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
       - name: Update Submodule Hash
         run: |
           git config user.name "github-actions[bot]"
@@ -31,7 +36,7 @@ jobs:
         id: updater
         run: |
           # Pass the entire client-payload from the dispatch to the python script
-          ../python/update_inventory.py '${{ toJson(github.event.client_payload) }}'
+          python scripts/update_inventory.py '${{ toJson(github.event.client_payload) }}'
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
