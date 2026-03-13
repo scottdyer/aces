@@ -3,7 +3,7 @@ import os
 import sys
 
 
-def update_json(payload_data):
+def update_json(payload_file):
     file_path = "transforms.json"
     staging_key = "next-release-placeholder"
 
