@@ -27,29 +27,24 @@ jobs:
           # Update the specific submodule to the SHA sent in the payload
           git update-index --cacheinfo 160000,${{ github.event.client_payload.sha }},${{ github.event.client_payload.submodule }}
       
-      - name: Log Payload (Debug) REMOVE
-        run: |
-          echo "Received dispatch from ${{ github.event.client_payload.submodule }}"
-          echo "Payload: ${{ toJson(github.event.client_payload) }}"
-    
-      - name: Update transforms.json
+      - name: Create fragment
         id: updater
         run: |
-          # 1. Save the payload to a temporary file to avoid shell quoting errors
           echo '${{ toJson(github.event.client_payload) }}' > payload.json
-          
-          # 2. Run the script pointing to that file
-          python scripts/update_inventory.py payload.json
+          python scripts/update_inventory.py payload.json       
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.PARENT_REPO_PAT }}
-          commit-message: "Sync ${{ github.event.client_payload.submodule }} to ${{ github.event.client_payload.sha }}"
-          title: "Auto-Sync: ${{ github.event.client_payload.submodule }}"
+          commit-message: "Add staging fragment for ${{ github.event.client_payload.submodule }} at ${{ github.event.client_payload.sha }}"
+          title: "Staging: ${{ github.event.client_payload.submodule }}"
           branch: "auto-sync-${{ github.event.client_payload.submodule }}"
+          add-paths: |
+            staging/*.json
           body: |
             Updated submodule pointer to latest SHA.
+            New transform metadata has been staged in the `staging/` directory.
             
             **Inventory Changes:**
-            ${{ steps.updater.outputs.changelog || 'No new transforms detected.' }}
+            ${{ steps.updater.outputs.changelog || 'None (Pointer update only)' }}
