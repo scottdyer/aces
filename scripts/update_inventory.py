@@ -37,19 +37,20 @@ def update_json(payload_file):
                 "transformType": "CSC",
                 "transformUrl": f"https://raw.githubusercontent.com/ampas/{payload['submodule']}/{payload['sha']}/{item['file']}",
             }
-            # Prevent duplicates
-            if item["id"] not in [
+
+            # Use transformId to check for existing entries
+            existing_ids = [
                 t["transformId"]
                 for t in data["transformsData"][staging_key]["transforms"]
-            ]:
+            ]
+            if item["id"] not in existing_ids:
                 data["transformsData"][staging_key]["transforms"].append(new_entry)
                 changelog.append(f"- `{item['id']}`")
 
         with open(file_path, "w") as f:
             json.dump(data, f, indent=2)
 
-        # Return changelog text for the PR body
-        return "\n".join(new_entries)
+        return "\n".join(changelog)
 
     except Exception as e:
         print(f"Error during JSON update: {e}")
