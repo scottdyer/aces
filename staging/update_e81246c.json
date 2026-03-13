@@ -1,0 +1,12 @@
+{
+  "submodule": "aces-input-and-colorspaces",
+  "sha": "e81246c75ebc9f7bc97ba4b8c262b35ddb6c796f",
+  "transforms": [
+    {
+      "transformId": "urn:ampas:aces:transformId:v2.0:CSC.Test.Debug.a2.v5",
+      "userName": "Debug Submodule Update Test File v5",
+      "transformType": "CSC",
+      "transformUrl": "https://raw.githubusercontent.com/ampas/aces-input-and-colorspaces/e81246c75ebc9f7bc97ba4b8c262b35ddb6c796f/test/CSC.Test.Debug_v5.ctl"
+    }
+  ]
+}
