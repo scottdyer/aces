@@ -4,6 +4,9 @@ on:
   repository_dispatch:
     types: [submodule_update]
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   update-parent:
     runs-on: ubuntu-latest
@@ -11,40 +14,35 @@ jobs:
       - name: Checkout parent
         uses: actions/checkout@v4
         with:
-          submodules: true
           token: ${{ secrets.PARENT_REPO_PAT }}
+          submodules: false 
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
-
-      - name: Update Submodule Hash
+      - name: Update Submodule Pointer
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          
-          # Update the specific submodule to the SHA sent in the payload
           git update-index --cacheinfo 160000,${{ github.event.client_payload.sha }},${{ github.event.client_payload.submodule }}
-      
-      - name: Create fragment
-        id: updater
+
+      - name: Write Changelog Fragment
         run: |
-          echo '${{ toJson(github.event.client_payload) }}' > payload.json
-          python scripts/update_inventory.py payload.json       
+          mkdir -p staging
+          SUBMODULE="${{ github.event.client_payload.submodule }}"
+          SHORT_SHA=$(echo "${{ github.event.client_payload.sha }}" | cut -c1-7)
+          MSG="${{ github.event.client_payload.commit_msg }}"
+          
+          # Write a clean, human-readable line to an isolated tracking file
+          echo "- [$SUBMODULE@$SHORT_SHA]: $MSG" > "staging/log-${SUBMODULE}-${SHORT_SHA}.txt"
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.PARENT_REPO_PAT }}
-          commit-message: "Add staging fragment for ${{ github.event.client_payload.submodule }} at ${{ github.event.client_payload.sha }}"
-          title: "Staging: ${{ github.event.client_payload.submodule }}"
-          branch: "auto-sync-${{ github.event.client_payload.submodule }}"
+          commit-message: "Sync ${{ github.event.client_payload.submodule }} and log history"
+          title: "Sync: ${{ github.event.client_payload.submodule }}"
+          branch: "sync-${{ github.event.client_payload.submodule }}"
           add-paths: |
-            staging/*.json
+            staging/*.txt
           body: |
-            Updated submodule pointer to latest SHA.
-            New transform metadata has been staged in the `staging/` directory.
-            
-            **Inventory Changes:**
-            ${{ steps.updater.outputs.changelog || 'None (Pointer update only)' }}
+            Automated submodule pointer sync.
+             Staged changelog line:
+            `${{ github.event.client_payload.commit_msg }}`
