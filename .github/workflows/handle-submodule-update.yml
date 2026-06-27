@@ -52,12 +52,20 @@ jobs:
         with:
           token: ${{ secrets.PARENT_REPO_PAT }}
           base: staging
-          commit-message: "Sync ${{ github.event.client_payload.submodule }} and stage metadata"
           title: "Sync: ${{ github.event.client_payload.submodule }}"
           branch: "sync-${{ github.event.client_payload.submodule }}"
           add-paths: |
             staging/*.json
+          committer: GitHub <noreply@github.com>
+          author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
+
+          commit-message: |
+            Sync ${{ github.event.client_payload.submodule }} to ${{ github.event.client_payload.sha }} and stage metadata
+          
+            Signed-off-by: ${{ github.event.client_payload.author_name }} <${{ github.event.client_payload.author_email }}>
+
           body: |
             Automated sync of submodule pointer
             - **Commit Message:** `${{ steps.stage.outputs.msg }}`
             - **New Transforms Detected:** `${{ steps.stage.outputs.count }}`
+            - **DCO Sign-off By:** `${{ github.event.client_payload.author_name }}`

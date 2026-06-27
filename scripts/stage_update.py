@@ -38,11 +38,18 @@ def main():
             
         print(f"Successfully staged fragment: {fragment_filename}")
         
+        # Compile a visual summary of changes
+        if new_transforms:
+            markdown_list = "\\n".join([f"- {t.get('user')} (`{t.get('id')}`)" for t in new_transforms])
+        else:
+            markdown_list = "No new transform files introduced"
+
         # Output a clean changelog line for the GitHub Actions summary step
         if "GITHUB_OUTPUT" in os.environ:
             with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
                 print(f"msg={commit_msg}", file=fh)
                 print(f"count={len(new_transforms)}", file=fh)
+                print(f"markdown_list={markdown_list}", file=fh)
 
     except Exception as e:
         print(f"Error processing staging fragment: {e}")
