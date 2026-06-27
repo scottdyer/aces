@@ -12,37 +12,51 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout parent
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           token: ${{ secrets.PARENT_REPO_PAT }}
           submodules: false 
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+    
       - name: Update Submodule Pointer
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git update-index --cacheinfo 160000,${{ github.event.client_payload.sha }},${{ github.event.client_payload.submodule }}
 
-      - name: Write Changelog Fragment
+      - name: Process and Stage Payload
+        id: stage
         run: |
-          mkdir -p staging
-          SUBMODULE="${{ github.event.client_payload.submodule }}"
-          SHORT_SHA=$(echo "${{ github.event.client_payload.sha }}" | cut -c1-7)
-          MSG="${{ github.event.client_payload.commit_msg }}"
+          # 1. Dump raw payload safely to avoid shell quote breaking
+          echo '${{ toJson(github.event.client_payload) }}' > temp_payload.json
           
-          # Write a clean, human-readable line to an isolated tracking file
-          echo "- [$SUBMODULE@$SHORT_SHA]: $MSG" > "staging/log-${SUBMODULE}-${SHORT_SHA}.txt"
+          # 2. Run the structured Python processing script
+          python scripts/stage_update.py temp_payload.json
+
+      # - name: Write Changelog Fragment
+      #   run: |
+      #     mkdir -p staging
+      #     SUBMODULE="${{ github.event.client_payload.submodule }}"
+      #     SHORT_SHA=$(echo "${{ github.event.client_payload.sha }}" | cut -c1-7)
+      #     MSG="${{ github.event.client_payload.commit_msg }}"
+          
+      #     # Write a clean, human-readable line to an isolated tracking file
+      #     echo "- [$SUBMODULE@$SHORT_SHA]: $MSG" > "staging/log-${SUBMODULE}-${SHORT_SHA}.txt"
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.PARENT_REPO_PAT }}
-          commit-message: "Sync ${{ github.event.client_payload.submodule }} and log history"
+          commit-message: "Sync ${{ github.event.client_payload.submodule }} and stage metadata"
           title: "Sync: ${{ github.event.client_payload.submodule }}"
           branch: "sync-${{ github.event.client_payload.submodule }}"
           add-paths: |
-            staging/*.txt
+            staging/*.json
           body: |
-            Automated submodule pointer sync.
-             Staged changelog line:
-            `${{ github.event.client_payload.commit_msg }}`
+            Automated sync of submodule pointer
+            - **Commit Message:** `${{ steps.stage.outputs.msg }}`
+            - **New Transforms Detected:** `${{ steps.stage.outputs.count }}`
