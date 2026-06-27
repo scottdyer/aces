@@ -1,0 +1,12 @@
+{
+  "submodule": "aces-core",
+  "sha": "9c1a4e417ec967dca973be3f6aca21be0fb2ffaf",
+  "commit_msg": "Add New File 5",
+  "new_transforms": [
+    {
+      "file": "lib/Lib.NewFile_5.ctl",
+      "id": "urn:ampas:aces:transformId:v2.0:Lib.Log_File_5",
+      "user": "New File 5"
+    }
+  ]
+}
