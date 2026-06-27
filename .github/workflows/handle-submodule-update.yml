@@ -51,6 +51,7 @@ jobs:
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.PARENT_REPO_PAT }}
+          base: staging
           commit-message: "Sync ${{ github.event.client_payload.submodule }} and stage metadata"
           title: "Sync: ${{ github.event.client_payload.submodule }}"
           branch: "sync-${{ github.event.client_payload.submodule }}"
