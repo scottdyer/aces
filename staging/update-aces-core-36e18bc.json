@@ -1,0 +1,12 @@
+{
+  "submodule": "aces-core",
+  "sha": "36e18bc4cb4c752d87ec73014a78f348ab2eda7e",
+  "commit_msg": "Rename New File 3 to New File 4",
+  "new_transforms": [
+    {
+      "file": "lib/Lib.NewFile_4.ctl",
+      "id": "urn:ampas:aces:transformId:v2.0:Lib.Log_File_4",
+      "user": "New File 4"
+    }
+  ]
+}
