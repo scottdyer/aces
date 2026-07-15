@@ -80,25 +80,34 @@ Releases are currently scheduled manually. The Technical Steering Committee (TSC
 
 ## Contributing
 
-ACES depends on community participation. Developers, manufacturers, and end users are encouraged to contribute code, bug fixes, documentation, and other technical artifacts.
+ACES relies on active community participation in order to succeed. We welcome contributions from developers, manufacturers, and end users alike. 
 
-All contributors must have a signed Contributor License Agreement (CLA) on file to ensure that the project can freely use your contributions. 
+### Many ways to contribute
+You can contribute to the ACES ecosystem in several ways:
+* **Feedback & Issues:** Log bugs or submit feature requests in our issue trackers.
+* **Technical Artifacts:** Contribute mathematical color transforms, utilities, or code.
+* **Documentation:** Create, edit, or clarify user-facing guides and documentation.
+* **Community:** Join discussions on our Slack and forum to help support other users. Join TSC meetings.
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md) for more details.
+### Legal requirements
+If you are participating by submitting code, documentation, or other technical artifacts via GitHub, you must complete two prerequisites before we can accept and merge your Pull Request:
+1. **Contributor License Agreement (CLA):** You must have a signed CLA on file to ensure the project can freely use your contributions.
+2. **Developer Certificate of Origin (DCO):** All commits must be signed off (e.g., `git commit -s`) to verify that you have the right to submit the code.
 
-## Governance
+Please see [Contributing Guidelines](https://github.com/aces-aswf/.github/blob/main/CONTRIBUTING.md) for more detail.
 
-ACES is a project hosted by the [Academy Software Foundation](https://aswf.io). 
-
-See [GOVERNANCE.md](GOVERNANCE.md) for details about how the project operates.
-
-## Reporting Issues
+### Reporting Issues
 
 To report a problem, please open an issue. 
 
 - Whenever possible, issues specific to a particular transform or component should be filed using the issue tracker of its containing repository.
-- General issues can be filed in this repository's [issue tracker](https://github.com/aces-aswf/aces/issues). 
-- For sensitive or security-related issues, do not use the public issue tracker. Instead, refer to [SECURITY.md](SECURITY.md) for details on the project's security policy.
+- General issues can be filed in this repository's [issue tracker](https://github.com/aces-aswf/aces/issues).
+- For sensitive or security-related issues, do not use the public issue tracker. Instead, refer to [Security Policy](https://github.com/aces-aswf/.github/blob/main/SECURITY.md) for details on the project's security policy.
+
+## Governance
+
+ACES is a project hosted by the [Academy Software Foundation](https://aswf.io). 
+See the [ACES Project Governance](https://github.com/aces-aswf/.github/blob/main/GOVERNANCE.md) to learn how the project operates.
 
 ## License
 
